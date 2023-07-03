@@ -17,30 +17,6 @@ int StatisticalFilter(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud, pcl::PointC
     sor.setMeanK(1000); // 设置在进行统计分析时考虑的临近点的数量
     // sor.setStddevMulThresh(1.0); // 设置判断是否为离群点的阈值
     sor.setStddevMulThresh(5.0); // 设置判断是否为离群点的阈值
-
-    // 计算点云的质心
-    Eigen::Vector4f centroid;
-    pcl::compute3DCentroid(*cloud, centroid);
-
-    // 创建一个条件对象
-    pcl::ConditionAnd<pcl::PointXYZRGB>::Ptr range_cond(new pcl::ConditionAnd<pcl::PointXYZRGB>());
-
-    // 设置条件，去掉距离当前帧中心远的点
-    range_cond->addComparison(pcl::FieldComparison<pcl::PointXYZRGB>::ConstPtr(new pcl::FieldComparison<pcl::PointXYZRGB>("x", pcl::ComparisonOps::LT, centroid[0] + 1.0)));
-    range_cond->addComparison(pcl::FieldComparison<pcl::PointXYZRGB>::ConstPtr(new pcl::FieldComparison<pcl::PointXYZRGB>("x", pcl::ComparisonOps::GT, centroid[0] - 1.0)));
-    range_cond->addComparison(pcl::FieldComparison<pcl::PointXYZRGB>::ConstPtr(new pcl::FieldComparison<pcl::PointXYZRGB>("y", pcl::ComparisonOps::LT, centroid[1] + 1.0)));
-    range_cond->addComparison(pcl::FieldComparison<pcl::PointXYZRGB>::ConstPtr(new pcl::FieldComparison<pcl::PointXYZRGB>("y", pcl::ComparisonOps::GT, centroid[1] - 1.0)));
-    range_cond->addComparison(pcl::FieldComparison<pcl::PointXYZRGB>::ConstPtr(new pcl::FieldComparison<pcl::PointXYZRGB>("z", pcl::ComparisonOps::LT, centroid[2] + 1.0)));
-    range_cond->addComparison(pcl::FieldComparison<pcl::PointXYZRGB>::ConstPtr(new pcl::FieldComparison<pcl::PointXYZRGB>("z", pcl::ComparisonOps::GT, centroid[2] - 1.0)));
-
-    // 创建一个滤波器对象
-    pcl::ConditionalRemoval<pcl::PointXYZRGB> condrem;
-    condrem.setCondition(range_cond);
-    condrem.setInputCloud(cloud);
-    condrem.setKeepOrganized(true);
-
-    // 应用滤波器
-    condrem.filter(*cloud_filtered);
     
     // 进行滤波处理，结果保存在cloud_filtered中
     sor.filter(*cloud_filtered);
