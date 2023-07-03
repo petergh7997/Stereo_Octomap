@@ -742,44 +742,6 @@ int main(int argc, char** argv){
             }
         }
         
-        // 使用最近邻插值，根据disp == -1或者disp == 0周围的点云深度来估计缺失的点深度的值
-        // for(int i = 0; i < height; i++){
-        // for(int j = 0; j < width; j++){
-        //     float disp = disp_mat.at<float>(i,j);
-        //     if(disp == -1 || disp == 0){
-        //         // depth_map.at<float>(i,j) = -1;
-        //         // 使用最近邻插值，根据disp == -1或者disp == 0周围的点云深度来估计缺失的点深度的值
-        //         int window_size = 5; // 设置窗口大小
-        //         float sum_depth = 0;
-        //         int valid_depth_count = 0;
-        //         for(int m = max(0, i - window_size); m <= min(height - 1, i + window_size); m++){
-        //             for(int n = max(0, j - window_size); n <= min(width - 1, j + window_size); n++){
-        //                 float neighbor_disp = disp_mat.at<float>(m,n);
-        //                 if(neighbor_disp > 0){
-        //                     float neighbor_depth = bf / neighbor_disp;
-        //                     sum_depth += neighbor_depth;
-        //                     valid_depth_count++;
-        //                 }
-        //             }
-        //         }
-        //         if(valid_depth_count > 0){
-        //             depth_map.at<float>(i,j) = sum_depth / valid_depth_count;
-        //         } else {
-        //             depth_map.at<float>(i,j) = -1;
-        //         }
-        //         continue;
-        //     }
-
-        //     float Z = bf/disp;
-        //     depth_map.at<float>(i,j) = Z;
-
-        //     }
-        //     // float Z = bf/disp;
-        //     // depth_map.at<float>(i,j) = Z;
-        //     // cout << disp<<" ";   
-        // }
-    
-
         // Step 2: 视差图转换成点云
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cur_cloud(new pcl::PointCloud<pcl::PointXYZRGB> );
 
@@ -808,10 +770,8 @@ int main(int argc, char** argv){
                 cur_cloud->points.push_back(pt);
         }
         }
-        // 对点云进行去除离群异常点去除
 
-         // 对点云进行降采样，
-         // !!! 对每一帧点云都进行降采样，速度会快一些
+         // 对每一帧点云进行降采样，
         // Create the filtering object
         pcl::VoxelGrid<pcl::PointXYZRGB> sor;
         sor.setInputCloud(cur_cloud);
@@ -819,6 +779,7 @@ int main(int argc, char** argv){
         sor.setLeafSize(0.05f, 0.05f, 0.05f);
         sor.filter(*cur_cloud);
 
+        // 对点云进行去除离群异常点去除
         StatisticalFilter(cur_cloud, cur_cloud_filtered);
         
         // *all_cloud 是对智能指针进行解引用，获取其所指向的对象。
@@ -833,7 +794,7 @@ int main(int argc, char** argv){
         // Step 4: 将每一帧点云转化为octomap地图    
         // cv::waitKey();
     } 
-    // Step 5: 使用pcl库保存拼接后的点云
+    // Step 5: 地图复用
 
     return 0;
 }
