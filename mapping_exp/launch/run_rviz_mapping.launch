@@ -1,0 +1,10 @@
+<launch>
+    <arg name="pkg_path" default="$(find mapping_exp)" />
+    <arg name="config_file" default="/config/vins_euroc_para.yaml" />
+
+    <!-- 启动 rviz 节点 -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find mapping_exp)/rviz_config_file.rviz"/>
+
+    <!-- 启动 mapping_node 节点 -->
+    <node name="mapping_node" pkg="mapping_exp" type="mapping_node" output="screen" args="$(arg pkg_path) $(arg config_file)" />
+</launch>

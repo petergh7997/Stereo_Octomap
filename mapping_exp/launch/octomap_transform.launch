@@ -1,0 +1,44 @@
+<launch>
+  <!-- 指定了一个名为octomap_server的节点，该节点将从octomap_server包中使用octomap_server_node可执行文件启动。 -->
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+
+    <!-- resolution in meters per pixel -->
+    <!-- 设置了八叉树地图的分辨率，以每个像素表示的米数为单位。该值设置为0.05，表示每个像素代表0.05平方米的区域。 -->
+    <param name="resolution" value="0.05" />
+
+    <!-- name of the fixed frame, needs to be "/map" for SLAM -->
+    <!-- 这个参数设置了用于SLAM（同时定位与建图）的固定坐标系的名称。该值设置为"world"。 -->
+    <param name="frame_id" type="string" value="world" />
+
+    <!-- max range / depth resolution of the kinect in meter -->
+    <!-- 参数设置了Kinect传感器的最大测距范围或深度分辨率，单位为米。该值设置为100.0，表示最大测距范围为100米。 -->
+    <param name="sensor_model/max_ran ge" value="100.0" />
+    <!-- 参数确定是否将发布的消息保存并立即发送给新的订阅者。当设置为true时，最后发布的消息将被保存并发送给新的订阅者。 -->
+    <param name="latch" value="true" />
+
+    <!-- max/min height for occupancy map, should be in meters -->
+    <!-- 参数定义了占据地图的最大和最小高度，单位为米。pointcloud_max_z参数设置为1.0，表示任何小于1.0米的点都将被考虑进行建图。pointcloud_min_z参数设置为-1.0，表示任何高于-1.0米的点都将被考虑进行建图。 -->
+    <param name="pointcloud_max_z" value="1.0" />
+    <param name="pointcloud_min_z" value="-1.0" />
+    
+    <!-- 重新映射了octomap_server节点订阅点云消息的主题。原始主题是/cloud_in，但它被重新映射为/dense_mapping_node/current_cloud_filtered。这个重新映射允许节点从不同的主题接收点云消息。 -->
+
+    <!-- <remap from="/cloud_in" to="/mapping_node/current_cloud_filtered" /> -->
+    <!-- <remap from="/cloud_in" to="/mapping_node/current_cloud" /> -->
+    <!-- <remap from="/cloud_in" to="/mapping_node/all_cloud" /> -->
+    <remap from="/cloud_in" to="all_cloud" />
+
+
+    <!-- <param name="filter_ground" value="true"这些参数与地面过滤相关，可以用于过滤掉属于地面的点。 />
+    <param name="ground_filter/distance" value="true" />
+    <param name="ground_filter/angle" value="true" />
+    <param name="ground_filter/plane_distance" value="true" /> -->
+
+    <!-- topic from where pointcloud2 messages are subscribed 这里需要根据自己的点云topic自行设置 -->
+    <!-- 重新映射了octomap_server节点订阅点云消息的主题。原始主题是/cloud_in，但它被重新映射为/dense_mapping_node/current_cloud_filtered。这个重新映射允许节点从不同的主题接收点云消息。 -->
+    <!-- <remap from="/cloud_in" to="/dense_mapping_node/current_cloud_filtered" /> -->
+    
+    <!-- <remap from="/cloud_in" to="/mapping_node/current_cloud_filtered" /> -->
+ 
+  </node>
+</launch>

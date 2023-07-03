@@ -1,0 +1,6 @@
+<launch>
+    <arg name = "pkg_path"  default = "$(find mapping_exp)"  />
+    <arg name = "config_file"  default = "/config/vins_euroc_para.yaml"  />
+    <node name = "mapping_node"  pkg = "mapping_exp"  type = "mapping_node"  output = "screen"  args = "$(arg pkg_path) $(arg config_file)"/>
+</launch>
+
