@@ -1,0 +1,4 @@
+<launch>
+    <node name="rviz_viewer" pkg="rviz" type="rviz" output="log" args="-d $(find mapping_exp)/config/view_octomap.rviz" />
+    <node name="octomap_server_node" pkg="octomap_server" type="octomap_server_node" output="screen" args="/home/peng/mapping_ws/src/mapping_exp/saved_map/my_map.ot" />
+</launch>

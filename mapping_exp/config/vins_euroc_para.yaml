@@ -1,5 +1,6 @@
 %YAML:1.0
 pose_graph_path: "/home/peng/catkin_ws/output/pose_graph/"
+# pose_graph_path: "/home/neousys/pengguohong/vins_project/pose_graph/"
 
 baseline: 0.110073808127187
 # focal_length: 457.975

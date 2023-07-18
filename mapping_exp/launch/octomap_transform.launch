@@ -8,7 +8,10 @@
 
     <!-- name of the fixed frame, needs to be "/map" for SLAM -->
     <!-- 这个参数设置了用于SLAM（同时定位与建图）的固定坐标系的名称。该值设置为"world"。 -->
-    <param name="frame_id" type="string" value="world" />
+    <!-- <param name="frame_id" type="string" value="world" /> -->
+
+    <!-- TODO：重新加载octomap地图并在rviz中显示时，需要将fixed_frame修改 /map， 在rviz中需要输入 //map,注意是两个/ -->
+    <param name="frame_id" type="string" value="/map" />
 
     <!-- max range / depth resolution of the kinect in meter -->
     <!-- 参数设置了Kinect传感器的最大测距范围或深度分辨率，单位为米。该值设置为100.0，表示最大测距范围为100米。 -->

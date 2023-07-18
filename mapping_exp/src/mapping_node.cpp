@@ -355,29 +355,29 @@ bool ComputeDispMat(const cv::Mat &img_left, const cv::Mat &img_right, cv::Mat &
         for(sint32 j = 0; j < width; j++){
             const float32 disp = disparity[i*width + j];
             if(disp == Invalid_Float){
-                // disp_mat.data[i * width + j] = 0;
-                // res_disp.at<float>(i,j) = -1;
+                disp_mat.data[i * width + j] = 0;
+                res_disp.at<float>(i,j) = -1;
                 
                 // 如果视差无效，请用近邻插值，如果无法插值，则设置为-1或0
-                float32 left_disp = 0.0f, right_disp = 0.0f;
-                if (j > 0 && disparity[i * width + j - 1] != Invalid_Float) {
-                    left_disp = disparity[i * width + j - 1];
-                }
-                if (j < width - 1 && disparity[i * width + j + 1] != Invalid_Float) {
-                    right_disp = disparity[i * width + j + 1];
-                }
-                if (left_disp != 0.0f && right_disp != 0.0f) {
-                    disp_mat.data[i * width + j] = static_cast<uchar>((left_disp + right_disp) / 2.0f);
-                    res_disp.at<float>(i,j) = (left_disp + right_disp) / 2.0f;
-                } else if (left_disp != 0.0f) {
-                    disp_mat.data[i * width + j] = static_cast<uchar>(left_disp);
-                    res_disp.at<float>(i,j) = left_disp;
-                } else if (right_disp != 0.0f) {
-                    disp_mat.data[i * width + j] = static_cast<uchar>(right_disp);
-                    res_disp.at<float>(i,j) = right_disp;
-                } else {
-                    disp_mat.data[i * width + j] = 0;
-                    res_disp.at<float>(i,j) = -1; }          
+                // float32 left_disp = 0.0f, right_disp = 0.0f;
+                // if (j > 0 && disparity[i * width + j - 1] != Invalid_Float) {
+                //     left_disp = disparity[i * width + j - 1];
+                // }
+                // if (j < width - 1 && disparity[i * width + j + 1] != Invalid_Float) {
+                //     right_disp = disparity[i * width + j + 1];
+                // }
+                // if (left_disp != 0.0f && right_disp != 0.0f) {
+                //     disp_mat.data[i * width + j] = static_cast<uchar>((left_disp + right_disp) / 2.0f);
+                //     res_disp.at<float>(i,j) = (left_disp + right_disp) / 2.0f;
+                // } else if (left_disp != 0.0f) {
+                //     disp_mat.data[i * width + j] = static_cast<uchar>(left_disp);
+                //     res_disp.at<float>(i,j) = left_disp;
+                // } else if (right_disp != 0.0f) {
+                //     disp_mat.data[i * width + j] = static_cast<uchar>(right_disp);
+                //     res_disp.at<float>(i,j) = right_disp;
+                // } else {
+                //     disp_mat.data[i * width + j] = 0;
+                //     res_disp.at<float>(i,j) = -1; }          
             }
             else{
                 // 若视差有效，则在此赋值， 比例系数
@@ -610,7 +610,10 @@ int main(int argc, char** argv){
 
 //这个消息变量可以用于ROS系统中的消息传递，比如可以将这个消息发布到某个topic上，也可以作为某个节点接收到消息的一部分。
         std_msgs::Header header;
-        header.frame_id = "world";
+        // header.frame_id = "world";
+        // TODO !!!显示八叉树地图的时候，需要将这个写为 /map，请参考ros的内置八叉树文档。
+        header.frame_id = "/map";
+
         // header.stamp = ros::time(time_stamp);
         header.stamp = ros::Time(time_stamp);
 
@@ -780,8 +783,13 @@ int main(int argc, char** argv){
         sor.filter(*cur_cloud);
 
         // 对点云进行去除离群异常点去除
-        StatisticalFilter(cur_cloud, cur_cloud_filtered);
-        
+        StatisticalFilter(cur_cloud, cur_cloud);
+        // VoxelGridFilter(cur_cloud, cur_cloud_filtered);
+        // RadiusFilter(cur_cloud, cur_cloud_filtered);
+        RadiusFilter(cur_cloud, cur_cloud_filtered);
+        GaussFilter(cur_cloud_filtered, cur_cloud_filtered);
+
+    
         // *all_cloud 是对智能指针进行解引用，获取其所指向的对象。
         // 将 all_cloud 所指向的对象和 cur_cloud_filtered 所指向的对象进行相加，然后将结果赋值给 all_cloud 所指向的对象。
         // 这里的 + 操作符是 pcl::PointCloud<pcl::PointXYZRGB> 类型定义的，用于合并两个点云。
